@@ -8,13 +8,16 @@ const TaskCard = ({ task }: { task: Task}) => {
             <p className="text-gray-300 text-xs">Created at: <br/>{task.createdAt.toString()}</p>
             <p className="text-gray-300 text-xs">Updated at: <br/>{task.updatedAt.toString()}</p>
 
-            {task.done ?
-                (<span className="bg-green-500 text-white px-2 py-1 mt-2 inline-block rounded">
-                    DONE
-                </span>) :
-                (<span className="bg-red-500 text-white px-2 py-1 mt-2 inline-block rounded">
-                    NOT DONE
-                </span>)}
+            <div className="flex mt-2 w-full">
+                {task.done ?
+                    (<span className="bg-green-500 text-white px-2 py-1 rounded-full">
+                        DONE
+                    </span>) :
+                    (<span className="bg-red-500 text-white px-2 py-1 rounded-full">
+                        NOT DONE
+                    </span>)
+                }
+            </div>
         </div>
     );
 };

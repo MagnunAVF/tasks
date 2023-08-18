@@ -25,7 +25,8 @@ function getTasks(req: NextRequest, res: NextResponse<CustomResponse>) {
     {
       id: 1,
       title: "foo",
-      description: "bar",
+      description:
+        "bar dhjsad jhsaijod ajdjosdijosdioj asdioj aodjasoijasdiojidj aiodjasioj asioj asijod asijd oia",
       done: false,
       createdAt: currentDate,
       updatedAt: currentDate,
