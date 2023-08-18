@@ -10,6 +10,10 @@ use auth::BasicAuth;
 use dotenv::dotenv;
 use rocket::response::status;
 use rocket::serde::json::{json, Value};
+use rocket_sync_db_pools::database;
+
+#[database("sqlite")]
+struct DbConn(diesel::SqliteConnection);
 
 #[catch(404)]
 fn not_found() -> Value {
@@ -22,7 +26,7 @@ fn health() -> Value {
 }
 
 #[get("/tasks")]
-fn get_tasks() -> Value {
+fn get_tasks(_db: DbConn) -> Value {
     json!([
         {
             "id": 1,
@@ -87,6 +91,7 @@ async fn main() {
             ],
         )
         .register("/", catchers![not_found])
+        .attach(DbConn::fairing())
         .launch()
         .await;
 }
