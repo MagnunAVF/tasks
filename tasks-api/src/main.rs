@@ -4,6 +4,11 @@ extern crate rocket;
 use rocket::response::status;
 use rocket::serde::json::{json, Value};
 
+#[catch(404)]
+fn not_found() -> Value {
+    json!("Not found!")
+}
+
 #[get("/")]
 fn health() -> Value {
     json!("OK")
@@ -72,6 +77,7 @@ async fn main() {
                 delete_task
             ],
         )
+        .register("/", catchers![not_found])
         .launch()
         .await;
 }
