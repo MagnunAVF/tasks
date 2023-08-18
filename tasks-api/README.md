@@ -8,6 +8,10 @@ cargo run
 ```
 
 ## User
-Local user credentials:
+Local user credentials (Basic Auth):
 * username: `ximira`
 * password: `gelo`
+Use this Auth header in request:
+```
+"Authorization": "Basic eGltaXJhOmdlbG8K"
+```

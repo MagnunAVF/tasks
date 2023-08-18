@@ -1,6 +1,10 @@
 #[macro_use]
 extern crate rocket;
 
+mod auth;
+
+use auth::BasicAuth;
+
 use rocket::response::status;
 use rocket::serde::json::{json, Value};
 
@@ -41,7 +45,7 @@ fn view_task(id: i32) -> Value {
     })
 }
 #[post("/tasks", format = "json")]
-fn create_task() -> Value {
+fn create_task(_auth: BasicAuth) -> Value {
     json!({
         "id": 1,
         "title": "foo",
@@ -50,7 +54,7 @@ fn create_task() -> Value {
     })
 }
 #[put("/tasks/<id>", format = "json")]
-fn update_task(id: i32) -> Value {
+fn update_task(id: i32, _auth: BasicAuth) -> Value {
     json!({
         "id": id,
         "title": "foo",
@@ -59,7 +63,7 @@ fn update_task(id: i32) -> Value {
     })
 }
 #[delete("/tasks/<_id>")]
-fn delete_task(_id: i32) -> status::NoContent {
+fn delete_task(_id: i32, _auth: BasicAuth) -> status::NoContent {
     status::NoContent
 }
 
