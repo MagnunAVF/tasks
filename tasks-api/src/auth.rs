@@ -1,5 +1,6 @@
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome, Request};
+use std::env;
 
 pub struct BasicAuth {
     pub username: String,
@@ -31,7 +32,9 @@ impl BasicAuth {
 
         let (username, password) = (split[0].to_string(), split[1].to_string());
 
-        if username != "ximira" || password != "gelo" {
+        let auth_username = env::var("AUTH_USERNAME").expect("AUTH_USERNAME not set in .env");
+        let auth_password = env::var("AUTH_PASSWORD").expect("AUTH_PASSWORD not set in .env");
+        if username != auth_username || password != auth_password {
             return None;
         }
 

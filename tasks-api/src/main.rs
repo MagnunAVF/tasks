@@ -1,10 +1,13 @@
 #[macro_use]
 extern crate rocket;
 
+extern crate dotenv;
+
 mod auth;
 
 use auth::BasicAuth;
 
+use dotenv::dotenv;
 use rocket::response::status;
 use rocket::serde::json::{json, Value};
 
@@ -69,6 +72,8 @@ fn delete_task(_id: i32, _auth: BasicAuth) -> status::NoContent {
 
 #[rocket::main]
 async fn main() {
+    dotenv().ok();
+
     let _ = rocket::build()
         .mount(
             "/",
