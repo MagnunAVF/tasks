@@ -4,6 +4,7 @@ extern crate rocket;
 extern crate dotenv;
 
 mod auth;
+mod migrations;
 mod models;
 mod repositories;
 mod schema;
@@ -11,8 +12,10 @@ mod schema;
 use auth::BasicAuth;
 use diesel::result::Error::NotFound;
 use dotenv::dotenv;
+use migrations::run_db_migrations;
 use models::{NewTask, Task};
 use repositories::TaskRepository;
+use rocket::fairing::AdHoc;
 use rocket::http::Status;
 use rocket::response::status;
 use rocket::response::status::Custom;
@@ -116,6 +119,7 @@ async fn main() {
         )
         .register("/", catchers![not_found])
         .attach(DbConn::fairing())
+        .attach(AdHoc::on_ignite("Diesel migrations", run_db_migrations))
         .launch()
         .await;
 }
