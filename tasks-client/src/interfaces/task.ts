@@ -7,13 +7,13 @@ export interface Task {
   updatedAt: Date;
 }
 
-export interface newTask {
+export interface NewTask {
   title: string;
   description: string;
   done: boolean;
 }
 
-export interface updatedTask {
+export interface UpdatedTask {
   title?: string;
   description?: string;
   done?: boolean;
