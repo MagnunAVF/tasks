@@ -5,8 +5,9 @@ const TaskCard = ({ task }: { task: Task}) => {
         <div className="bg-white p-4 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold mb-2">{task.title}</h3>
             <p className="text-gray-600 mb-2">{task.description}</p>
-            <p className="text-gray-300 text-xs">Created at: <br/>{task.createdAt.toString()}</p>
-            <p className="text-gray-300 text-xs">Updated at: <br/>{task.updatedAt.toString()}</p>
+            <p className="text-gray-300 text-xs"><strong>ID:</strong> {task.id}</p>
+            <p className="text-gray-300 text-xs"><strong>Created at:</strong> <br/>{task.createdAt.toString()}</p>
+            <p className="text-gray-300 text-xs"><strong>Updated at:</strong> <br/>{task.updatedAt.toString()}</p>
 
             <div className="flex mt-2 w-full">
                 {task.done ?

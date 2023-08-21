@@ -8,7 +8,33 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const runtime = 'experimental-edge';
 
-export default function Home({ tasks }: { tasks: Task[]}) {
+function generateTaskCards(tasks: Task[]) {
+  return (
+    <section className="mt-4 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      {tasks.map((task, index) => (
+        <TaskCard key={index} task={task} />
+      ))}
+    </section>
+  )
+}
+
+function generateErrorMessage(errorMessage: String) {
+  return (
+    <section className="mt-4 flex justify-center items-center">
+      <p className="text-gray-600 text-center m-5">{errorMessage}</p>
+    </section>
+  )
+}
+
+function generateNoTasksMessage() {
+  return (
+    <section className="mt-4 flex justify-center items-center">
+      <p className="text-gray-600 text-center m-5">No tasks found!</p>
+    </section>
+  )
+}
+
+export default function Home({ tasks, errorMessage }: { tasks: Task[], errorMessage: String}) {
   return (
     <main className={`flex-grow p-4 ${inter.className}`}>
         <section className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
@@ -16,11 +42,11 @@ export default function Home({ tasks }: { tasks: Task[]}) {
             <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Create</button>
         </section>
 
-        <section className="mt-4 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {tasks.map((task, index) => (
-            <TaskCard key={index} task={task} />
-          ))}
-        </section>
+        {
+          errorMessage !== "" ?
+            generateErrorMessage(errorMessage) :
+            (tasks.length > 0 ? generateTaskCards(tasks) : generateNoTasksMessage())
+        }
     </main>
   )
 }
@@ -28,9 +54,20 @@ export default function Home({ tasks }: { tasks: Task[]}) {
 export const getServerSideProps: GetServerSideProps<{
   tasks: Task[]
 }> = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BFF_API_URL}/tasks`);
-  const respBody = await res.json();
-  const tasks = respBody.data;
+  let errorMessage: String = "";
+  let tasks: Task[] = [];
 
-  return { props: { tasks } };
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BFF_API_URL}/tasks`);
+    if (res.status !== 200) {
+      throw new Error();
+    } else {
+      const respBody = await res.json();
+      tasks = respBody.data;
+    }
+  } catch (error) {
+    errorMessage = "Error getting tasks";
+  }
+
+  return { props: { tasks, errorMessage } };
 }
