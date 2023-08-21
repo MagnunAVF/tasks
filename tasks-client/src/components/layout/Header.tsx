@@ -1,9 +1,11 @@
-import React from 'react'
+import Link from "next/link"
 
 function Header() {
   return (
     <header className="w-full p-4 bg-blue-500 text-white">
-      <h1 className="text-lg">Tasks</h1>
+      <Link href="/">
+        <h1 className="text-lg"><strong>Tasks</strong></h1>
+      </Link>
     </header>
   )
 }

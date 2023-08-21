@@ -12,7 +12,7 @@ function generateTaskCards(tasks: Task[]) {
   return (
     <section className="mt-4 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {tasks.map((task, index) => (
-        <TaskCard key={index} task={task} />
+        <TaskCard key={index} task={task} full={false}/>
       ))}
     </section>
   )

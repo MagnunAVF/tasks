@@ -25,3 +25,11 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.clickable-div {
+  cursor: pointer;
+}
+
+.clickable-div.hovered {
+  background-color: #e0e0e0;
+}
