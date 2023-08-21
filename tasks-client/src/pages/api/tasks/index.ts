@@ -1,47 +1,73 @@
 import type { NextRequest, NextResponse } from "next/server";
 
-import { Task } from "@/interfaces/task";
+import { Task, NewTask } from "@/interfaces/task";
 import { CustomResponse, createResponse } from "@/utils/response";
+import { isAvalidTask } from "@/utils/validations";
+import { generateAuthToken } from "@/utils/auth";
 
 export const runtime = "edge";
 
-function createTask(req: NextRequest, res: NextResponse<CustomResponse>) {
-  const currentDate = new Date();
-  const task: Task = {
-    id: 1,
-    title: "foo",
-    description: "bar",
-    done: false,
-    createdAt: currentDate,
-    updatedAt: currentDate,
-  };
+async function createTask(req: NextRequest) {
+  try {
+    const data = await req.json();
+    const validTask: boolean = isAvalidTask(data);
 
-  return createResponse(task, null, 201);
+    if (!validTask) {
+      return createResponse(null, "Invalid task attributes.", 400);
+    } else {
+      const newTask: NewTask = data;
+      const resp = await fetch(`${process.env.TASKS_API_URL}/tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${generateAuthToken()}`,
+        },
+        body: JSON.stringify(newTask),
+      });
+
+      if (resp.status !== 200) {
+        throw new Error(
+          `Error creating tasks. Status: ${resp.status} ; Error: ${resp.statusText}`
+        );
+      } else {
+        const task: Task = await resp.json();
+
+        return createResponse(task, null, 201);
+      }
+    }
+  } catch (error) {
+    console.log(`Error creating task`);
+    console.log(error);
+
+    return createResponse(null, "Internal Server Error", 500);
+  }
 }
 
-function getTasks(req: NextRequest, res: NextResponse<CustomResponse>) {
-  const currentDate = new Date();
-  const tasks: Task[] = [
-    {
-      id: 1,
-      title: "foo",
-      description:
-        "bar dhjsad jhsaijod ajdjosdijosdioj asdioj aodjasoijasdiojidj aiodjasioj asioj asijod asijd oia",
-      done: false,
-      createdAt: currentDate,
-      updatedAt: currentDate,
-    },
-    {
-      id: 2,
-      title: "foo 2",
-      description: "bar 2",
-      done: true,
-      createdAt: currentDate,
-      updatedAt: currentDate,
-    },
-  ];
+async function getTasks() {
+  try {
+    const resp = await fetch(`${process.env.TASKS_API_URL}/tasks`);
 
-  return createResponse(tasks, null, 201);
+    if (resp.status !== 200) {
+      throw new Error(
+        `Error fetching tasks. Status: ${resp.status} ; Error: ${resp.statusText}`
+      );
+    } else {
+      const tasks: Task[] = (await resp.json()).map((t: any) => {
+        return {
+          ...t,
+          createdAt: new Date(t.created_at),
+          updatedAt: new Date(t.updated_at),
+        };
+      });
+
+      return createResponse(tasks, null, 200);
+    }
+  } catch (error) {
+    console.log(`Error fetching tasks`);
+    console.log(error);
+
+    return createResponse(null, "Internal Server Error", 500);
+  }
 }
 
 export default function handler(
@@ -50,9 +76,9 @@ export default function handler(
 ) {
   switch (req.method) {
     case "POST":
-      return createTask(req, res);
+      return createTask(req);
     case "GET":
-      return getTasks(req, res);
+      return getTasks();
     default:
       return createResponse(null, "Not Allowed", 405);
   }
