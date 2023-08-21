@@ -17,7 +17,7 @@ function generateErrorMessage(errorMessage: String) {
   )
 }
 
-export default function Home({ task, errorMessage }: { task: Task, errorMessage: String}) {
+export default function ViewPage({ task, errorMessage }: { task: Task, errorMessage: String}) {
   return (
     <main className={`flex-grow p-4 ${inter.className}`}>
         <h3 className="text-2xl font-bold mb-5">Task View</h3>

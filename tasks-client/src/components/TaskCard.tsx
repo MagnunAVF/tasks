@@ -21,7 +21,7 @@ const TaskCard = ({ task, full }: { task: Task, full: boolean}) => {
         let classname = "bg-white p-4 rounded-lg shadow-md";
 
         if (!full) {
-            classname += " clickable-div";
+            classname += " clickable-div"
 
             isHovered ? classname += " hovered" : classname += "";
         }
