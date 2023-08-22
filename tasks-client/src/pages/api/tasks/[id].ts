@@ -93,7 +93,7 @@ async function deleteTaskById(id: number) {
         `Error creating tasks. Status: ${resp.status} ; Error: ${resp.statusText}`
       );
     } else {
-      return createResponse({}, null, 200);
+      return createResponse(null, null, 200);
     }
   } catch (error) {
     console.log(`Error creating task`);

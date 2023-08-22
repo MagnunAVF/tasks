@@ -58,7 +58,7 @@ export default function UpdatePage({ task } : { task: UpdateTask }) {
         }
 
         <div className="mt-5">
-            <Link href="/">Go to Home</Link>
+            <Link href={`/tasks/${task?.id}`}>Go Back</Link>
         </div>
     </main>
   )
@@ -69,28 +69,28 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async (context) => {
     let task: UpdateTask|null = null;
     try {
-        const { query } = context;
-        const { id, title, description, done } = query;
+      const { query } = context;
+      const { id, title, description, done } = query;
 
-        if (!id || !title || !description || !done) {
-            throw new Error("Invalid task attributes.");
-        } else {
-            task = {
-                id: parseInt(id?.toString() || ""),
-                title: title?.toString() || "",
-                description: description?.toString() || "",
-                done: done?.toString() === "true",
-            }
+      if (!id || !title || !description || !done) {
+        throw new Error("Invalid task attributes.");
+      } else {
+        task = {
+          id: parseInt(id?.toString() || ""),
+          title: title?.toString() || "",
+          description: description?.toString() || "",
+          done: done?.toString() === "true",
         }
+      }
     } catch (error) {
-        console.log(error);
+      console.log(error);
 
-        return {
-            redirect: {
-              destination: '/',
-              permanent: false,
-            },
-        };
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        },
+      };
     }
 
     return { props: { task } };

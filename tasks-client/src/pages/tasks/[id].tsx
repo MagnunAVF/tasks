@@ -21,6 +21,10 @@ function generateErrorMessage(errorMessage: String) {
 export default function ViewPage({ task, errorMessage }: { task: Task, errorMessage: String}) {
   const router = useRouter();
 
+  const goToHomePage = () => {
+    router.push('/');
+  };
+
   const goToUpdatePage = () => {
     router.push({
       pathname: `/tasks/${task.id}/update`,
@@ -32,6 +36,29 @@ export default function ViewPage({ task, errorMessage }: { task: Task, errorMess
     });
   };
 
+  const deleteTask = async (task: Task) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BFF_API_URL}/tasks/${task.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (res.status !== 200) {
+        throw new Error();
+      }
+
+      goToHomePage();
+    } catch (error) {
+      console.log();
+      goToHomePage();
+    }
+  }
+
   return (
     <main className={`flex-grow p-4 ${inter.className}`}>
         <h3 className="text-2xl font-bold mb-5">Task View</h3>
@@ -42,6 +69,12 @@ export default function ViewPage({ task, errorMessage }: { task: Task, errorMess
             onClick={goToUpdatePage}>
             Update
           </button>
+
+          <button
+            className="bg-red-500 hover:bg-yellow-600 text-white px-4 py-2 rounded my-5 ml-5 focus:outline-none focus:shadow-outline"
+            onClick={async () => await deleteTask(task)}>
+            Delete
+          </button>
         </div>
 
         {
@@ -51,7 +84,7 @@ export default function ViewPage({ task, errorMessage }: { task: Task, errorMess
         }
 
         <div className="mt-5">
-            <Link href="/">Go to Home</Link>
+          <Link href="/">Go to Home</Link>
         </div>
     </main>
   )
@@ -67,7 +100,7 @@ export const getServerSideProps: GetServerSideProps<{
   const { id } = query;
 
   try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BFF_API_URL}/tasks/${id}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BFF_API_URL}/tasks/${id}`);
     if (res.status === 404) {
         errorMessage = "Task Not Found";
     } else if (res.status !== 200) {
