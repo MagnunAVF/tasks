@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from "next/link"
 import { useRouter } from 'next/router';
 import { Inter } from 'next/font/google'
 
 import { NewTask } from '@/interfaces/task';
 import TaskForm from '@/components/TaskForm';
+import { generateAuthToken } from '@/utils/auth';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,6 +22,18 @@ function generateErrorMessage(errorMessage: String) {
 
 export default function NewPage() {
   const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    const credentials = JSON.parse(localStorage.getItem('credentials') ?? '{}');
+
+    const validCredentials = (credentials.username && credentials.password) &&
+      (credentials.username !== '' && credentials.password !== '');
+
+    if (!validCredentials) {
+      window.location.href = '/';
+    }
+  }, []);
+
   const router = useRouter();
   const goToHomePage = () => {
     router.push('/');
@@ -28,12 +41,16 @@ export default function NewPage() {
 
   const handleCreateTask = async (newTask: NewTask) => {
     try {
+      const credentials = JSON.parse(localStorage.getItem('credentials') ?? '{}');
+      const token = generateAuthToken(credentials);
+
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BFF_API_URL}/tasks`,
         {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Basic ${token}`,
             },
             body: JSON.stringify(newTask),
         }
@@ -44,7 +61,7 @@ export default function NewPage() {
         throw new Error();
       }
     } catch (error) {
-        setErrorMessage("Error creating task!");
+      setErrorMessage("Error creating task!");
     }
   };
 

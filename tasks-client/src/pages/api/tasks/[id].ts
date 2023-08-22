@@ -2,7 +2,6 @@ import type { NextRequest, NextResponse } from "next/server";
 
 import { NewTask, Task } from "@/interfaces/task";
 import { CustomResponse, createResponse } from "@/utils/response";
-import { generateAuthToken } from "@/utils/auth";
 import { isAvalidTask } from "@/utils/validations";
 
 export const runtime = "edge";
@@ -55,7 +54,7 @@ async function updateTaskById(req: NextRequest, id: number) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Basic ${generateAuthToken()}`,
+          Authorization: req.headers.get("Authorization") || "",
         },
         body: JSON.stringify(newTask),
       });
@@ -78,13 +77,13 @@ async function updateTaskById(req: NextRequest, id: number) {
   }
 }
 
-async function deleteTaskById(id: number) {
+async function deleteTaskById(req: NextRequest, id: number) {
   try {
     const resp = await fetch(`${process.env.TASKS_API_URL}/tasks/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Basic ${generateAuthToken()}`,
+        Authorization: req.headers.get("Authorization") || "",
       },
     });
 
@@ -136,7 +135,7 @@ export default function handler(
     case "PUT":
       return updateTaskById(req, id);
     case "DELETE":
-      return deleteTaskById(id);
+      return deleteTaskById(req, id);
     default:
       return createResponse(null, "Not Allowed", 405);
   }

@@ -1,10 +1,12 @@
 import { GetServerSideProps } from 'next';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from "next/link";
 import { Inter } from 'next/font/google';
 
 import { Task } from '@/interfaces/task';
 import TaskCard from '@/components/TaskCard';
+import { generateAuthToken } from '@/utils/auth';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -36,14 +38,29 @@ export default function ViewPage({ task, errorMessage }: { task: Task, errorMess
     });
   };
 
+  useEffect(() => {
+    const credentials = JSON.parse(localStorage.getItem('credentials') ?? '{}');
+
+    const validCredentials = (credentials.username && credentials.password) &&
+      (credentials.username !== '' && credentials.password !== '');
+
+    if (!validCredentials) {
+      window.location.href = '/';
+    }
+  }, []);
+
   const deleteTask = async (task: Task) => {
     try {
+      const credentials = JSON.parse(localStorage.getItem('credentials') ?? '{}');
+      const token = generateAuthToken(credentials);
+
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BFF_API_URL}/tasks/${task.id}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Basic ${token}`,
           },
         }
       );

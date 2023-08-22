@@ -3,7 +3,6 @@ import type { NextRequest, NextResponse } from "next/server";
 import { Task, NewTask } from "@/interfaces/task";
 import { CustomResponse, createResponse } from "@/utils/response";
 import { isAvalidTask } from "@/utils/validations";
-import { generateAuthToken } from "@/utils/auth";
 
 export const runtime = "edge";
 
@@ -20,7 +19,7 @@ async function createTask(req: NextRequest) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Basic ${generateAuthToken()}`,
+          Authorization: req.headers.get("Authorization") || "",
         },
         body: JSON.stringify(newTask),
       });

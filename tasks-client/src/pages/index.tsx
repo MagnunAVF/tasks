@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 
 import { Task } from '@/interfaces/task';
 import TaskCard from '@/components/TaskCard';
+import Login from '@/components/Login';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -39,6 +40,7 @@ export default function HomePage({ tasks, errorMessage }: { tasks: Task[], error
   return (
     <main className={`flex-grow p-4 ${inter.className}`}>
         <h3 className="text-2xl font-bold">Tasks List</h3>
+        <Login />
 
         <Link href="/tasks/new">
           <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded my-5 focus:outline-none focus:shadow-outline">
