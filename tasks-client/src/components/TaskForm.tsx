@@ -1,30 +1,29 @@
 import { useState } from 'react';
 
-import { NewTask, Task } from "@/interfaces/task";
+import { NewTask, UpdateTask } from "@/interfaces/task";
 
 const TaskForm = ({ onSave, update, task }:
-    { onSave: any, task: Task|null, update: boolean}) => {
-
+    { onSave: any, task: UpdateTask|null, update: boolean}) => {
     const [title, setTitle] = useState(update ? task?.title ?? '' : '');
     const [description, setDescription] = useState(update ? task?.description ?? '' : '');
     const [done, setDone] = useState(update ? task?.done ?? false : false);
 
     const handleSubmit = (e: any) => {
-        e.preventDefault();
+      e.preventDefault();
 
-        const newTask: NewTask = {
-            title,
-            description,
-            done,
-        };
+      const newTask: NewTask | UpdateTask = {
+        title,
+        description,
+        done,
+      };
 
-        onSave(newTask);
+      onSave(newTask);
 
-        if (!update) {
-            setTitle('');
-            setDescription('');
-            setDone(false);
-        }
+      if (!update) {
+          setTitle('');
+          setDescription('');
+          setDone(false);
+      }
     };
 
     return (

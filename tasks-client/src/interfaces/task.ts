@@ -13,7 +13,8 @@ export interface NewTask {
   done: boolean;
 }
 
-export interface UpdatedTask {
+export interface UpdateTask {
+  id?: number;
   title?: string;
   description?: string;
   done?: boolean;

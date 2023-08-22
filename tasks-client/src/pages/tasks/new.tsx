@@ -50,7 +50,7 @@ export default function NewPage() {
 
   return (
     <main className={`flex-grow p-4 ${inter.className}`}>
-        <h3 className="text-2xl font-bold mb-5">Task View</h3>
+        <h3 className="text-2xl font-bold mb-5">New Task</h3>
 
         {errorMessage !== '' ?
             generateErrorMessage(errorMessage) :
